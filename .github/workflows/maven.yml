@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Test with Maven
-      run: mvn clean verify
+      run: mvn -f ../pom.xml clean verify
 
     - name: Test Report
       uses: actions/upload-artifact@v4
