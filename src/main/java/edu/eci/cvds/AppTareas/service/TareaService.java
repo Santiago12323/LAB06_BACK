@@ -13,7 +13,7 @@ public class TareaService {
 
     private final TareaPersistence tareaPersistence;
 
-    public TareaService(@Qualifier("file") TareaPersistence tareaPersistence) {
+    public TareaService(@Qualifier("mongoDB") TareaPersistence tareaPersistence) {
         this.tareaPersistence = tareaPersistence;
     }
 
