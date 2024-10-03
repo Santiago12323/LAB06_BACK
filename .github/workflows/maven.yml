@@ -8,9 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -27,19 +25,19 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Test with Maven
-        run: mvn -f ../../pom.xml clean verify
+    - name: Test with Maven
+      run: mvn -f ../../pom.xml clean verify
 
-      - name: Test Report
-        uses: actions/upload-artifact@v4
-        if: success() || failure()
-        with:
-          name: SpringBoot Report             # Name of the folder
-          path: target/site/jacoco/           # Path to test results
+    - name: Test Report
+      uses: actions/upload-artifact@v4
+      if: success() || failure()
+      with:
+        name: SpringBoot Report             # Name of the folder
+        path: target/site/jacoco/           # Path to test results
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy
-        run: echo "En construcción..."
+    - name: Deploy
+      run: echo "En construcción..."
