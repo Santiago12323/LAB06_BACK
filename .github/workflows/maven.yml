@@ -1,16 +1,14 @@
-name: Build and Test Java Spring Boot Application 
- 
+name: Build and Test Java Spring Boot Application
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
- 
+    branches: [ "main", "develop" ]
+
 jobs:
   build:
- 
     runs-on: ubuntu-latest
- 
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 21
@@ -28,14 +26,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Test with Maven
-      run: mvn -f ../pom.xml clean verify
+      run: mvn -f ../../pom.xml clean verify
 
     - name: Test Report
       uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
-          name: SpringBoot Report             # Name of the folder
-          path: target/site/jacoco/           # Path to test results
+        name: SpringBoot Report             # Name of the folder
+        path: target/site/jacoco/           # Path to test results
 
   deploy:
     needs: test
