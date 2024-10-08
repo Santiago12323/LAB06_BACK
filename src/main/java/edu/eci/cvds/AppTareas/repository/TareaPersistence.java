@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TareaPersistence {
-    Tarea guardar(Tarea tarea);
-    Optional<Tarea> obtenerPorId(String id);
-    List<Tarea> obtenerTodas();
-    void eliminar(String id);
+    Tarea save(Tarea tarea);
+    Optional<Tarea> findById(String id);
+    List<Tarea> findAll();
+    void deleteById(String id);
 }

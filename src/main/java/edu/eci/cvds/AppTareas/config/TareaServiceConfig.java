@@ -1,11 +1,13 @@
 package edu.eci.cvds.AppTareas.config;
 
 import edu.eci.cvds.AppTareas.repository.FileTareaRepository;
+import edu.eci.cvds.AppTareas.repository.TareaPersistence;
 import edu.eci.cvds.AppTareas.repository.MongoTareaRepository;
-import edu.eci.cvds.AppTareas.service.TareaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class TareaServiceConfig {
@@ -13,12 +15,21 @@ public class TareaServiceConfig {
     @Value("${tarea.persistence}")
     private String persistenceType;
 
+    @Autowired
+    private MongoTareaRepository mongoTareaRepository;
+
+    @Autowired
+    private FileTareaRepository fileTareaRepository;
+
     @Bean
-    public TareaService tareaService(MongoTareaRepository mongoDB, FileTareaRepository file) {
+    @Primary // Establecemos este bean como principal
+    public TareaPersistence tareaServicePersistence() {
         if ("file".equals(persistenceType)) {
-            return new TareaService(file);
+            return fileTareaRepository;
+        } else if ("mongoDB".equals(persistenceType)) {
+            return mongoTareaRepository;
         } else {
-            return new TareaService(mongoDB);
+            throw new IllegalArgumentException("Tipo de persistencia no soportado: " + persistenceType);
         }
     }
 }

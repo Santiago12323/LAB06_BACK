@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository("file")
 public class FileTareaRepository implements TareaPersistence {
 
-    // Inyectamos la ruta del archivo desde application.properties por constructor
+    // Inyectamos la ruta del archivo
     private String filePath;
     private final Gson gson = new Gson();
     private final Type listType = new TypeToken<ArrayList<Tarea>>() {}.getType();
@@ -38,8 +38,8 @@ public class FileTareaRepository implements TareaPersistence {
     }
 
     @Override
-    public Tarea guardar(Tarea tarea) {
-        List<Tarea> tareas = obtenerTodas();
+    public Tarea save(Tarea tarea) {
+        List<Tarea> tareas = findAll();
 
         // Encontramos la tarea existente
         Optional<Tarea> tareaExistente = tareas.stream()
@@ -59,14 +59,13 @@ public class FileTareaRepository implements TareaPersistence {
         return tarea;
     }
 
-
     @Override
-    public Optional<Tarea> obtenerPorId(String id) {
-        return obtenerTodas().stream().filter(t -> t.getId().equals(id)).findFirst();
+    public Optional<Tarea> findById(String id) {
+        return findAll().stream().filter(t -> t.getId().equals(id)).findFirst();
     }
 
     @Override
-    public List<Tarea> obtenerTodas() {
+    public List<Tarea> findAll() {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String content = reader.lines().reduce("", (acc, line) -> acc + line);
             if (content.isEmpty()) {
@@ -79,8 +78,8 @@ public class FileTareaRepository implements TareaPersistence {
     }
 
     @Override
-    public void eliminar(String id) {
-        List<Tarea> tareas = obtenerTodas();
+    public void deleteById(String id) {
+        List<Tarea> tareas = findAll();
         tareas.removeIf(t -> t.getId().equals(id));
         escribirEnArchivo(tareas);
     }
