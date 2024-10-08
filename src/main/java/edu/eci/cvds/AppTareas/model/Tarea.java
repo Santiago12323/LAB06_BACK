@@ -15,7 +15,6 @@ public class Tarea {
     private String descripcion;
     private boolean estado;
 
-
     public Tarea(){
 
     }

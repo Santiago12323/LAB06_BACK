@@ -12,17 +12,19 @@ import org.springframework.context.annotation.Primary;
 @Configuration
 public class TareaServiceConfig {
 
-    @Value("${tarea.persistence}")
-    private String persistenceType;
+    private final String persistenceType;
+    private final MongoTareaRepository mongoTareaRepository;
+    private final FileTareaRepository fileTareaRepository;
 
     @Autowired
-    private MongoTareaRepository mongoTareaRepository;
-
-    @Autowired
-    private FileTareaRepository fileTareaRepository;
+    public TareaServiceConfig(@Value("${tarea.persistence}") String persistenceType, MongoTareaRepository mongoTareaRepository, FileTareaRepository fileTareaRepository) {
+        this.persistenceType = persistenceType;
+        this.mongoTareaRepository = mongoTareaRepository;
+        this.fileTareaRepository = fileTareaRepository;
+    }
 
     @Bean
-    @Primary // Establecemos este bean como principal
+    @Primary
     public TareaPersistence tareaServicePersistence() {
         if ("file".equals(persistenceType)) {
             return fileTareaRepository;
