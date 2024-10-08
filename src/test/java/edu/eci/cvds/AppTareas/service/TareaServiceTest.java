@@ -1,139 +1,250 @@
 package edu.eci.cvds.AppTareas.service;
 
 import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.repository.TareaRepository;
+import edu.eci.cvds.AppTareas.repository.TareaPersistence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class TareaServiceTest {
 
-    private TareaRepository tareaRepository;
+    @Mock
+    private TareaPersistence tareaPersistence;
+
+    @InjectMocks
     private TareaService tareaService;
+
+    private Tarea tarea;
 
     @BeforeEach
     void setUp() {
-        tareaRepository = Mockito.mock(TareaRepository.class);
-        tareaService = new TareaService(tareaRepository);
+        // Inicializamos los mocks y la clase de servicio
+        MockitoAnnotations.openMocks(this);
+        tarea = new Tarea();
+        tarea.setId("1");
+        tarea.setNombre("Tarea 1");
+        tarea.setDescripcion("Descripción de la tarea 1");
+        tarea.setEstado(false);
     }
+
+    // PRUEBAS BÁSICAS DE FUNCIONAMIENTO
 
     @Test
     void testCrearTarea() {
-        Tarea tarea = new Tarea(null, "Tarea 1", "Descripción 1", false);
-
-        when(tareaRepository.save(any(Tarea.class))).thenReturn(tarea);
+        when(tareaPersistence.save(any(Tarea.class))).thenReturn(tarea);
 
         Tarea tareaCreada = tareaService.crear(tarea);
 
         assertNotNull(tareaCreada.getId());
-        assertEquals("Tarea 1", tareaCreada.getNombre());
-        verify(tareaRepository, times(1)).save(tarea);
-    }
-
-    @Test
-    void testObtenerTarea() {
-        String tareaId = UUID.randomUUID().toString();
-        Tarea tarea = new Tarea(tareaId, "Tarea 1", "Descripción 1", false);
-
-        when(tareaRepository.findById(tareaId)).thenReturn(Optional.of(tarea));
-
-        Tarea tareaObtenida = tareaService.obtenerTarea(tareaId);
-
-        assertNotNull(tareaObtenida);
-        assertEquals(tareaId, tareaObtenida.getId());
-        verify(tareaRepository, times(1)).findById(tareaId);
-    }
-
-    @Test
-    void testEliminarTarea() {
-        String tareaId = UUID.randomUUID().toString();
-
-        doNothing().when(tareaRepository).deleteById(tareaId);
-
-        tareaService.eliminarTarea(tareaId);
-
-        verify(tareaRepository, times(1)).deleteById(tareaId);
-    }
-
-    @Test
-    void testCambiarEstado() {
-        String tareaId = UUID.randomUUID().toString();
-        Tarea tarea = new Tarea(tareaId, "Tarea 1", "Descripción 1", false);
-
-        when(tareaRepository.findById(tareaId)).thenReturn(Optional.of(tarea));
-        when(tareaRepository.save(any(Tarea.class))).thenReturn(tarea);
-
-        boolean resultado = tareaService.cambiarEstado(tareaId);
-
-        assertTrue(resultado);
-        assertTrue(tarea.getEstado());
-        verify(tareaRepository, times(1)).save(tarea);
-    }
-
-    @Test
-    void testCambiarEstadoTareaNoExistente() {
-        String tareaId = UUID.randomUUID().toString();
-
-        // Simulamos que la tarea no existe devolviendo Optional.empty()
-        when(tareaRepository.findById(tareaId)).thenReturn(Optional.empty());
-
-        boolean resultado = tareaService.cambiarEstado(tareaId);
-
-        assertFalse(resultado);  // Debe devolver falso porque la tarea no existe
-        verify(tareaRepository, never()).save(any(Tarea.class));  // Verificamos que no se intenta guardar una tarea
+        assertEquals(tarea.getNombre(), tareaCreada.getNombre());
+        verify(tareaPersistence, times(1)).save(any(Tarea.class));
     }
 
     @Test
     void testObtenerTareas() {
-        Tarea tarea1 = new Tarea(UUID.randomUUID().toString(), "Tarea 1", "Descripción 1", false);
-        Tarea tarea2 = new Tarea(UUID.randomUUID().toString(), "Tarea 2", "Descripción 2", true);
+        List<Tarea> tareas = new ArrayList<>();
+        tareas.add(tarea);
+        when(tareaPersistence.findAll()).thenReturn(tareas);
 
-        when(tareaRepository.findAll()).thenReturn(List.of(tarea1, tarea2));
+        List<Tarea> tareasObtenidas = tareaService.obtenerTareas();
 
-        List<Tarea> tareas = tareaService.obtenerTareas();
+        assertEquals(1, tareasObtenidas.size());
+        assertEquals(tarea.getNombre(), tareasObtenidas.get(0).getNombre());
+        verify(tareaPersistence, times(1)).findAll();
+    }
 
-        assertEquals(2, tareas.size());
-        verify(tareaRepository, times(1)).findAll();
+    @Test
+    void testObtenerTareaExistente() {
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.of(tarea));
+
+        Tarea tareaObtenida = tareaService.obtenerTarea(tarea.getId());
+
+        assertEquals(tarea.getId(), tareaObtenida.getId());
+        verify(tareaPersistence, times(1)).findById(tarea.getId());
+    }
+
+    @Test
+    void testObtenerTareaNoExistente() {
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.obtenerTarea(tarea.getId());
+        });
+
+        assertEquals("Tarea con ID 1 no existe", exception.getMessage());
+    }
+
+    @Test
+    void testEliminarTareaExistente() {
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.of(tarea));
+
+        tareaService.eliminarTarea(tarea.getId());
+
+        verify(tareaPersistence, times(1)).deleteById(tarea.getId());
+    }
+
+    @Test
+    void testEliminarTareaNoExistente() {
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.eliminarTarea(tarea.getId());
+        });
+
+        assertEquals("No se puede eliminar la tarea. La tarea con ID 1 no existe.", exception.getMessage());
+    }
+
+    @Test
+    void testEliminarTareaConIdNulo() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.eliminarTarea(null);
+        });
+
+        assertEquals("El ID de la tarea no puede ser nulo o vacío", exception.getMessage());
     }
 
     @Test
     void testActualizarTarea() {
-        String tareaId = UUID.randomUUID().toString();
-        Tarea tareaExistente = new Tarea(tareaId, "Tarea 1", "Descripción 1", false);
-        Tarea nuevaTarea = new Tarea(tareaId, "Tarea Actualizada", "Descripción Actualizada", true);
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.of(tarea));
+        Tarea nuevaTarea = new Tarea();
+        nuevaTarea.setNombre("Tarea Actualizada");
+        nuevaTarea.setDescripcion("Descripción actualizada");
+        nuevaTarea.setEstado(true);
 
-        when(tareaRepository.findById(tareaId)).thenReturn(Optional.of(tareaExistente));
+        tareaService.actualizarTarea(tarea.getId(), nuevaTarea);
 
-        tareaService.actualizarTarea(tareaId, nuevaTarea);
+        ArgumentCaptor<Tarea> captor = ArgumentCaptor.forClass(Tarea.class);
+        verify(tareaPersistence, times(1)).save(captor.capture());
 
-        verify(tareaRepository, times(1)).findById(tareaId);
-        verify(tareaRepository, times(1)).save(tareaExistente);
-
-        assertEquals("Tarea Actualizada", tareaExistente.getNombre());
-        assertEquals("Descripción Actualizada", tareaExistente.getDescripcion());
-        assertTrue(tareaExistente.getEstado());
+        Tarea tareaGuardada = captor.getValue();
+        assertEquals(nuevaTarea.getNombre(), tareaGuardada.getNombre());
+        assertEquals(nuevaTarea.getDescripcion(), tareaGuardada.getDescripcion());
+        assertEquals(nuevaTarea.getEstado(), tareaGuardada.getEstado());
     }
 
     @Test
     void testActualizarTareaNoExistente() {
-        String tareaIdInexistente = UUID.randomUUID().toString();
-        Tarea nuevaTarea = new Tarea(tareaIdInexistente, "Nueva Tarea", "Nueva Descripción", true);
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.empty());
 
-        when(tareaRepository.findById(tareaIdInexistente)).thenReturn(Optional.empty());
-
-        // Espera que se lance una IllegalArgumentException
-        assertThrows(IllegalArgumentException.class, () -> {
-            tareaService.actualizarTarea(tareaIdInexistente, nuevaTarea);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.actualizarTarea(tarea.getId(), tarea);
         });
 
-        verify(tareaRepository, never()).save(any(Tarea.class)); // Nunca debe intentar guardar la tarea.
+        assertEquals("Tarea con ID 1 no existe", exception.getMessage());
+    }
+
+    @Test
+    void testCambiarEstadoTarea() {
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.of(tarea));
+
+        boolean resultado = tareaService.cambiarEstado(tarea.getId());
+
+        assertTrue(resultado);
+        assertTrue(tarea.getEstado());
+        verify(tareaPersistence, times(1)).save(tarea);
+    }
+
+    @Test
+    void testCambiarEstadoTareaNoExistente() {
+        when(tareaPersistence.findById(tarea.getId())).thenReturn(Optional.empty());
+
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.cambiarEstado(tarea.getId());
+        });
+
+        assertEquals("Tarea con ID 1 no existe", exception.getMessage());
+    }
+
+    // PRUEBAS PARA LA PARTE 1 DEVOPS / CI-CD
+
+    @Test
+    void dadoUnaTareaRegistrada_CuandoLaConsulto_EntoncesLaConsultaEsExitosaYValidaElId() {
+        // Crear una tarea de prueba
+        Tarea tarea = new Tarea("1", "Test Task", "Descripción", false);
+
+        // Configurar el mock para que retorne la tarea cuando se consulta por su ID
+        when(tareaPersistence.findById("1")).thenReturn(Optional.of(tarea));
+
+        // Ejecutar el método de servicio
+        Tarea tareaConsultada = tareaService.obtenerTarea("1");
+
+        // Validar que el ID es correcto
+        assertEquals("1", tareaConsultada.getId());
+        verify(tareaPersistence, times(1)).findById("1");
+    }
+
+    @Test
+    void dadoNoHayTareasRegistradas_CuandoLaConsulto_EntoncesNoRetornaraResultado() {
+        // Configurar el mock para que no retorne ninguna tarea
+        when(tareaPersistence.findById("999")).thenReturn(Optional.empty());
+
+        // Verificar que se lanza una excepción al consultar un ID inexistente
+        assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.obtenerTarea("999");
+        });
+
+        verify(tareaPersistence, times(1)).findById("999");
+    }
+
+    @Test
+    void dadoNoHayTareasRegistradas_CuandoCreoUnaTarea_EntoncesLaCreacionEsExitosa() {
+        // Crear una tarea de prueba
+        Tarea tarea = new Tarea(null, "Nueva Tarea", "Descripción", false);
+        Tarea tareaConId = new Tarea("generated-id", "Nueva Tarea", "Descripción", false);
+
+        // Configurar el mock para que guarde la tarea y retorne una con ID generado
+        when(tareaPersistence.save(any(Tarea.class))).thenReturn(tareaConId);
+
+        // Ejecutar el método de servicio
+        Tarea tareaCreada = tareaService.crear(tarea);
+
+        // Validar que se ha generado un ID y que la tarea fue guardada correctamente
+        assertNotNull(tareaCreada.getId());
+        verify(tareaPersistence, times(1)).save(any(Tarea.class));
+    }
+
+    @Test
+    void dadoUnaTareaRegistrada_CuandoLaElimino_EntoncesLaEliminacionEsExitosa() {
+        // Crear una tarea de prueba
+        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false);
+
+        // Configurar el mock para que retorne la tarea cuando se consulte por ID
+        when(tareaPersistence.findById("2")).thenReturn(Optional.of(tarea));
+
+        // Ejecutar la eliminación
+        tareaService.eliminarTarea("2");
+
+        // Verificar que se llamó a eliminar en el repositorio
+        verify(tareaPersistence, times(1)).deleteById("2");
+    }
+
+    @Test
+    void dadoUnaTareaRegistrada_CuandoLaEliminoYLaConsulto_EntoncesNoRetornaResultado() {
+        // Crear una tarea de prueba
+        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false);
+
+        // Configurar el mock para que retorne la tarea cuando se consulte por ID antes de eliminarla
+        when(tareaPersistence.findById("3")).thenReturn(Optional.of(tarea)).thenReturn(Optional.empty());
+
+        // Ejecutar la eliminación
+        tareaService.eliminarTarea("3");
+
+        // Verificar que la tarea ha sido eliminada y no puede ser consultada
+        assertThrows(IllegalArgumentException.class, () -> {
+            tareaService.obtenerTarea("3");
+        });
+
+        // Verificar las interacciones
+        verify(tareaPersistence, times(2)).findById("3");  // Se llama para eliminar y consultar
+        verify(tareaPersistence, times(1)).deleteById("3"); // Se llama para eliminar la tarea
     }
 }
