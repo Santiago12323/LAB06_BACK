@@ -25,19 +25,27 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Test with Maven
-      run: mvn -f pom.xml clean verify
+      - uses: actions/checkout@v4  #Clonamos el repositorio
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
 
-    - name: Test Report
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: SpringBoot Report             # Name of the folder
-        path: target/site/jacoco/           # Path to test results
+      - name: Test with Maven
+        run: mvn -f pom.xml clean verify
+
+      - name: Test Report with Jacoco
+        uses: actions/upload-artifact@v4
+        if: success() || failure()
+        with:
+          name: SpringBoot Report             # Name of the folder
+          path: target/site/jacoco/           # Path to test results
 
   deploy:
     needs: test
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy
-      run: echo "En construcción..."
+      - name: Deploy
+        run: echo "En construcción..."
