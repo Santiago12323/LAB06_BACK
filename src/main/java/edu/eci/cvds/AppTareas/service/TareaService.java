@@ -34,8 +34,21 @@ public class TareaService {
     }
 
     public void eliminarTarea(String tareaId) {
+        // Verifica si el ID de la tarea es nulo o vacío
+        if (tareaId == null || tareaId.isEmpty()) {
+            throw new IllegalArgumentException("El ID de la tarea no puede ser nulo o vacío");
+        }
+
+        // Verifica si la tarea existe antes de intentar eliminarla
+        Optional<Tarea> tarea = tareaPersistence.findById(tareaId);
+        if (tarea.isEmpty()) {
+            throw new IllegalArgumentException("No se puede eliminar la tarea. La tarea con ID " + tareaId + " no existe.");
+        }
+
+        // Procedemos a eliminar la tarea
         tareaPersistence.deleteById(tareaId);
     }
+
 
     public void actualizarTarea(String tareaId, Tarea nuevaTarea) {
         Tarea tarea = obtenerTarea(tareaId);
