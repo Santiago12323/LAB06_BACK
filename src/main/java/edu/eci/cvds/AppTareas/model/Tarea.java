@@ -1,12 +1,20 @@
 package edu.eci.cvds.AppTareas.model;
 
-import java.lang.annotation.Documented;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Data;
-import org.springframework.data.annotation.Id;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "tareas")
+@Getter
+@Setter
+@NoArgsConstructor
+@Document(collection = "tareas")  // Indica que es un documento de MongoDB
+@Entity
+@Table(name = "tareas")
 @Data
 public class Tarea {
     @Id
@@ -15,10 +23,6 @@ public class Tarea {
     private String descripcion;
     private boolean estado;
 
-    public Tarea(){
-
-    }
-
     public Tarea(String id, String nombre, String descripcion, boolean estado) {
         this.id = id;
         this.nombre = nombre;
@@ -26,35 +30,7 @@ public class Tarea {
         this.estado = estado;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
     public boolean getEstado() {
         return estado;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
     }
 }
