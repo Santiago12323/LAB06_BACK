@@ -4,7 +4,6 @@ import edu.eci.cvds.AppTareas.model.Tarea;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,7 +11,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class FileTareaRepositoryTest {
 
     private Path tempFilePath;
@@ -89,4 +87,3 @@ class FileTareaRepositoryTest {
         assertEquals(2, tareas.size()); // Verifica que se hayan guardado las dos tareas
     }
 }
-
