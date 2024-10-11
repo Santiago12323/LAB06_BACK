@@ -3,7 +3,6 @@ package edu.eci.cvds.AppTareas.repository;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import edu.eci.cvds.AppTareas.model.Tarea;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
@@ -15,13 +14,12 @@ import java.util.Optional;
 @Repository("file")
 public class FileTareaRepository implements TareaPersistence {
 
-    // Inyectamos la ruta del archivo
-    private String filePath;
+    
+    private final String filePath = "/home/site/wwwroot/App_Data/tareas.json"; 
     private final Gson gson = new Gson();
     private final Type listType = new TypeToken<ArrayList<Tarea>>() {}.getType();
 
-    public FileTareaRepository(@Value("${tarea.file.path}") String filePath) {
-        this.filePath = filePath;
+    public FileTareaRepository() {
         inicializarArchivo();  // Verifica si el archivo existe, de lo contrario lo crea
     }
 
@@ -29,7 +27,8 @@ public class FileTareaRepository implements TareaPersistence {
         File archivo = new File(filePath);
         if (!archivo.exists()) {
             try {
-                archivo.createNewFile(); // Crea el archivo si no existe
+                archivo.getParentFile().mkdirs(); 
+                archivo.createNewFile(); 
                 escribirEnArchivo(new ArrayList<>()); // Inicializa el archivo vacío con una lista vacía
             } catch (IOException e) {
                 throw new RuntimeException("No se pudo crear el archivo: " + filePath, e);
@@ -41,21 +40,21 @@ public class FileTareaRepository implements TareaPersistence {
     public Tarea save(Tarea tarea) {
         List<Tarea> tareas = findAll();
 
-        // Encontramos la tarea existente
+        
         Optional<Tarea> tareaExistente = tareas.stream()
                 .filter(t -> t.getId().equals(tarea.getId()))
                 .findFirst();
 
         if (tareaExistente.isPresent()) {
-            // Reemplazamos la tarea existente en su posición original
+            
             int index = tareas.indexOf(tareaExistente.get());
             tareas.set(index, tarea);
         } else {
-            // Si la tarea no existe, la añadimos al final
+            
             tareas.add(tarea);
         }
 
-        escribirEnArchivo(tareas); // Guardamos la lista actualizada
+        escribirEnArchivo(tareas); 
         return tarea;
     }
 
@@ -69,7 +68,7 @@ public class FileTareaRepository implements TareaPersistence {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String content = reader.lines().reduce("", (acc, line) -> acc + line);
             if (content.isEmpty()) {
-                return new ArrayList<>();  // Si el archivo está vacío, retorna una lista vacía
+                return new ArrayList<>();  
             }
             return gson.fromJson(content, listType);
         } catch (IOException e) {
