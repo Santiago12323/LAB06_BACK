@@ -1,6 +1,5 @@
 package edu.eci.cvds.AppTareas.config;
 
-import edu.eci.cvds.AppTareas.repository.FileTareaRepository;
 import edu.eci.cvds.AppTareas.repository.TareaPersistence;
 import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
 import edu.eci.cvds.AppTareas.repository.mysql.MySQLTareaRepository;
@@ -15,26 +14,21 @@ public class TareaServiceConfig {
 
     private final String persistenceType;
     private final MongoTareaRepository mongoTareaRepository;
-    private final FileTareaRepository fileTareaRepository;
     private final MySQLTareaRepository mysqlTareaRepository;
 
     @Autowired
     public TareaServiceConfig(@Value("${tarea.persistence}") String persistenceType,
                               MongoTareaRepository mongoTareaRepository,
-                              FileTareaRepository fileTareaRepository,
                               MySQLTareaRepository mysqlTareaRepository) {
         this.persistenceType = persistenceType;
         this.mongoTareaRepository = mongoTareaRepository;
-        this.fileTareaRepository = fileTareaRepository;
         this.mysqlTareaRepository = mysqlTareaRepository;
     }
 
     @Bean
     @Primary
     public TareaPersistence tareaServicePersistence() {
-        if ("file".equals(persistenceType)) {
-            return fileTareaRepository;
-        } else if ("mongoDB".equals(persistenceType)) {
+        if ("mongoDB".equals(persistenceType)) {
             return mongoTareaRepository;
         } else if ("mysql".equals(persistenceType)) {
             return mysqlTareaRepository;
