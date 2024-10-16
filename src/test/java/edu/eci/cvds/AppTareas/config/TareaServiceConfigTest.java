@@ -1,6 +1,5 @@
 package edu.eci.cvds.AppTareas.config;
 
-import edu.eci.cvds.AppTareas.repository.FileTareaRepository;
 import edu.eci.cvds.AppTareas.repository.TareaPersistence;
 import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
 import edu.eci.cvds.AppTareas.repository.mysql.MySQLTareaRepository;
@@ -20,9 +19,6 @@ public class TareaServiceConfigTest {
     private MongoTareaRepository mongoTareaRepository;
 
     @Mock
-    private FileTareaRepository fileTareaRepository;
-
-    @Mock
     private MySQLTareaRepository mySQLTareaRepository;
 
     @BeforeEach
@@ -31,29 +27,22 @@ public class TareaServiceConfigTest {
     }
 
     @Test
-    public void testTareaServicePersistenceWithFile() {
-        tareaServiceConfig = new TareaServiceConfig("file", mongoTareaRepository, fileTareaRepository, mySQLTareaRepository);
-        TareaPersistence result = tareaServiceConfig.tareaServicePersistence();
-        assertEquals(fileTareaRepository, result);
-    }
-
-    @Test
     public void testTareaServicePersistenceWithMongoDB() {
-        tareaServiceConfig = new TareaServiceConfig("mongoDB", mongoTareaRepository, fileTareaRepository, mySQLTareaRepository);
+        tareaServiceConfig = new TareaServiceConfig("mongoDB", mongoTareaRepository, mySQLTareaRepository);
         TareaPersistence result = tareaServiceConfig.tareaServicePersistence();
         assertEquals(mongoTareaRepository, result);
     }
 
     @Test
     public void testTareaServicePersistenceWithMySQL() {
-        tareaServiceConfig = new TareaServiceConfig("mysql", mongoTareaRepository, fileTareaRepository, mySQLTareaRepository);
+        tareaServiceConfig = new TareaServiceConfig("mysql", mongoTareaRepository, mySQLTareaRepository);
         TareaPersistence result = tareaServiceConfig.tareaServicePersistence();
         assertEquals(mySQLTareaRepository, result);
     }
 
     @Test
     public void testTareaServicePersistenceWithInvalidType() {
-        tareaServiceConfig = new TareaServiceConfig("invalidType", mongoTareaRepository, fileTareaRepository, mySQLTareaRepository);
+        tareaServiceConfig = new TareaServiceConfig("invalidType", mongoTareaRepository, mySQLTareaRepository);
         assertThrows(IllegalArgumentException.class, () -> {
             tareaServiceConfig.tareaServicePersistence();
         });
