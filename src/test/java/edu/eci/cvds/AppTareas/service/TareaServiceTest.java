@@ -12,6 +12,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -169,7 +171,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaConsulto_EntoncesLaConsultaEsExitosaYValidaElId() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("1", "Test Task", "Descripción", false);
+        Tarea tarea = new Tarea("1", "Test Task", "Descripción", false, null);
 
         // Configurar el mock para que retorne la tarea cuando se consulta por su ID
         when(tareaPersistence.findById("1")).thenReturn(Optional.of(tarea));
@@ -198,8 +200,8 @@ class TareaServiceTest {
     @Test
     void dadoNoHayTareasRegistradas_CuandoCreoUnaTarea_EntoncesLaCreacionEsExitosa() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea(null, "Nueva Tarea", "Descripción", false);
-        Tarea tareaConId = new Tarea("generated-id", "Nueva Tarea", "Descripción", false);
+        Tarea tarea = new Tarea(null, "Nueva Tarea", "Descripción", false,null);
+        Tarea tareaConId = new Tarea("generated-id", "Nueva Tarea", "Descripción", false,null);
 
         // Configurar el mock para que guarde la tarea y retorne una con ID generado
         when(tareaPersistence.save(any(Tarea.class))).thenReturn(tareaConId);
@@ -215,7 +217,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaElimino_EntoncesLaEliminacionEsExitosa() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false);
+        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false,null);
 
         // Configurar el mock para que retorne la tarea cuando se consulte por ID
         when(tareaPersistence.findById("2")).thenReturn(Optional.of(tarea));
@@ -230,7 +232,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaEliminoYLaConsulto_EntoncesNoRetornaResultado() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false);
+        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false,null);
 
         // Configurar el mock para que retorne la tarea cuando se consulte por ID antes de eliminarla
         when(tareaPersistence.findById("3")).thenReturn(Optional.of(tarea)).thenReturn(Optional.empty());

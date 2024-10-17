@@ -19,8 +19,6 @@ public class TareaService {
     }
 
     public Tarea crear(Tarea tarea) {
-        String id = UUID.randomUUID().toString();
-        tarea.setId(id);
         return tareaPersistence.save(tarea);
     }
 
