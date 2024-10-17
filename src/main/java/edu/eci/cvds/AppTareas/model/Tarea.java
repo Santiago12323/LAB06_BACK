@@ -19,14 +19,21 @@ public class Tarea {
     private String descripcion;
     private boolean estado;
 
+    private int prioridad;
+    private String dificultad;
+    private double tiempoPromedio;
+
     @Column(name = "usuarioId")
     private String usuarioId;
 
-    public Tarea(String id, String nombre, String descripcion, boolean estado, String IDusuario) {
+    public Tarea(String id, String nombre, String descripcion, boolean estado, String IDusuario, int prioridad, String dificultad, double tiempoPromedio) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.estado = estado;
+        this.prioridad = prioridad;
+        this.dificultad = dificultad;
+        this.tiempoPromedio = tiempoPromedio;
         this.usuarioId = IDusuario;
     }
 

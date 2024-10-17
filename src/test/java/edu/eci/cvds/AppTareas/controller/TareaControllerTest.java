@@ -32,7 +32,7 @@ class TareaControllerTest {
 
     @BeforeEach
     void setUp() {
-        tarea = new Tarea(UUID.randomUUID().toString(), "Tarea 1", "Descripción 1", false,null);
+        tarea = new Tarea(UUID.randomUUID().toString(), "Tarea 1", "Descripción 1", false,null, 4, "Alto", 10);
     }
 
     @Test
@@ -93,7 +93,7 @@ class TareaControllerTest {
 
     @Test
     void testActualizarTarea() throws Exception {
-        Tarea nuevaTarea = new Tarea(tarea.getId(), "Tarea Actualizada", "Descripción Actualizada", true,null);
+        Tarea nuevaTarea = new Tarea(tarea.getId(), "Tarea Actualizada", "Descripción Actualizada", true, null, 4, "Alto", 10);
 
         doNothing().when(tareaService).actualizarTarea(anyString(), any(Tarea.class));
 

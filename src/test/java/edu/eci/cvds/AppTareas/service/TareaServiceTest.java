@@ -4,15 +4,12 @@ import edu.eci.cvds.AppTareas.model.Tarea;
 import edu.eci.cvds.AppTareas.repository.TareaPersistence;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,6 +18,9 @@ class TareaServiceTest {
 
     @Mock
     private TareaPersistence tareaPersistence;
+
+    @Spy
+    private Random random = new Random(); // Usamos un Spy para controlar el Random
 
     @InjectMocks
     private TareaService tareaService;
@@ -171,7 +171,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaConsulto_EntoncesLaConsultaEsExitosaYValidaElId() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("1", "Test Task", "Descripción", false, null);
+        Tarea tarea = new Tarea("1", "Test Task", "Descripción", false,null, 2, "Bajo", 6);
 
         // Configurar el mock para que retorne la tarea cuando se consulta por su ID
         when(tareaPersistence.findById("1")).thenReturn(Optional.of(tarea));
@@ -200,8 +200,8 @@ class TareaServiceTest {
     @Test
     void dadoNoHayTareasRegistradas_CuandoCreoUnaTarea_EntoncesLaCreacionEsExitosa() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea(null, "Nueva Tarea", "Descripción", false,null);
-        Tarea tareaConId = new Tarea("generated-id", "Nueva Tarea", "Descripción", false,null);
+        Tarea tarea = new Tarea(null, "Nueva Tarea", "Descripción", false,null, 3, "Bajo", 9);
+        Tarea tareaConId = new Tarea("generated-id", "Nueva Tarea", "Descripción", false,null, 4, "Medio", 12);
 
         // Configurar el mock para que guarde la tarea y retorne una con ID generado
         when(tareaPersistence.save(any(Tarea.class))).thenReturn(tareaConId);
@@ -217,7 +217,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaElimino_EntoncesLaEliminacionEsExitosa() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false,null);
+        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false, null,1, "Bajo", 2.2);
 
         // Configurar el mock para que retorne la tarea cuando se consulte por ID
         when(tareaPersistence.findById("2")).thenReturn(Optional.of(tarea));
@@ -232,7 +232,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaEliminoYLaConsulto_EntoncesNoRetornaResultado() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false,null);
+        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false, null,3, "Medio", 5.5);
 
         // Configurar el mock para que retorne la tarea cuando se consulte por ID antes de eliminarla
         when(tareaPersistence.findById("3")).thenReturn(Optional.of(tarea)).thenReturn(Optional.empty());
@@ -249,4 +249,6 @@ class TareaServiceTest {
         verify(tareaPersistence, times(2)).findById("3");  // Se llama para eliminar y consultar
         verify(tareaPersistence, times(1)).deleteById("3"); // Se llama para eliminar la tarea
     }
+
+
 }
