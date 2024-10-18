@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @Entity
 @Table(name = "tareas")
 @Data
@@ -35,6 +34,10 @@ public class Tarea {
         this.dificultad = dificultad;
         this.tiempoPromedio = tiempoPromedio;
         this.usuarioId = IDusuario;
+    }
+
+    public Tarea(){
+
     }
 
     public String getId() {
