@@ -5,6 +5,7 @@ import edu.eci.cvds.AppTareas.model.Tarea;
 import edu.eci.cvds.AppTareas.model.usuario;
 import edu.eci.cvds.AppTareas.service.usuarioService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,9 +23,13 @@ public class usuarioController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public usuario crear(@RequestBody usuario usuario) {
-        return usuarioService.crearUsuario(usuario);
+    public ResponseEntity<String> crear(@RequestBody usuario usuario) {
+        try {
+            usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
+            return new ResponseEntity<>("Usuario creado: " + nuevoUsuario.getNombre(), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping
