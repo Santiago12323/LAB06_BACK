@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,11 +36,10 @@ class usuarioControllerTest {
     void crearUsuarioTest() {
         usuario nuevoUsuario = new usuario("testPass", "testUser", "1");
         when(usuarioService.crearUsuario(any(usuario.class))).thenReturn(nuevoUsuario);
-
-        usuario resultado = usuarioController.crear(nuevoUsuario);
-
+        ResponseEntity<String> resultado = usuarioController.crear(nuevoUsuario);
         assertNotNull(resultado);
-        assertEquals("testUser", resultado.getNombre());
+        assertEquals(HttpStatus.CREATED, resultado.getStatusCode());
+        assertEquals("Usuario creado: testUser", resultado.getBody());
         verify(usuarioService, times(1)).crearUsuario(any(usuario.class));
     }
 
