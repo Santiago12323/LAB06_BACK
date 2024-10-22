@@ -47,9 +47,9 @@ public class usuarioController {
         return usuarioService.verifacarpass(nombre,contraseña);
     }
 
-    @GetMapping("/tareas/{id}")
-    public List<Tarea> tareasUsuario(@PathVariable String id){
-        return usuarioService.obtenerTareasDeUsuario(id);
+    @GetMapping("/tareas/{nombre}")
+    public List<Tarea> tareasUsuario(@PathVariable String nombre){
+        return usuarioService.obtenerTareasDeUsuario(nombre);
     }
 
 

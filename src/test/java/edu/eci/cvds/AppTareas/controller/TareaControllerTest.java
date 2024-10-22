@@ -93,7 +93,7 @@ class TareaControllerTest {
 
     @Test
     void testActualizarTarea() throws Exception {
-        Tarea nuevaTarea = new Tarea(tarea.getId(), "Tarea Actualizada", "Descripción Actualizada", true, null, 4, "Alto", 10);
+        Tarea nuevaTarea = new Tarea(tarea.getId(), "Tarea Actualizada", "Descripción Actualizada", true,null, 4, "Alto", 10);
 
         doNothing().when(tareaService).actualizarTarea(anyString(), any(Tarea.class));
 

@@ -22,10 +22,10 @@ public class Tarea {
     private String dificultad;
     private double tiempoPromedio;
 
-    @Column(name = "usuarioId")
-    private String usuarioId;
+    @Column(name = "usuarioNombre")
+    private String usuarioNombre;
 
-    public Tarea(String id, String nombre, String descripcion, boolean estado, String IDusuario, int prioridad, String dificultad, double tiempoPromedio) {
+    public Tarea(String id, String nombre, String descripcion, boolean estado, String usuarioNombre, int prioridad, String dificultad, double tiempoPromedio) {
         this.id = id;
         this.nombre = nombre;
         this.descripcion = descripcion;
@@ -33,7 +33,6 @@ public class Tarea {
         this.prioridad = prioridad;
         this.dificultad = dificultad;
         this.tiempoPromedio = tiempoPromedio;
-        this.usuarioId = IDusuario;
     }
 
     public Tarea(){
@@ -56,9 +55,6 @@ public class Tarea {
         return estado;
     }
 
-    public String getUsuarioId() {
-        return usuarioId;
-    }
 
     public void setId(String id) {
         this.id = id;
@@ -76,7 +72,12 @@ public class Tarea {
         this.estado = estado;
     }
 
-    public void setUsuarioid(String id) {
-        this.usuarioId = usuarioId;
+
+    public String getUsuarioNombre() {
+        return usuarioNombre;
+    }
+
+    public void setUsuarioNombre(String usuarioNombre) {
+        this.usuarioNombre = usuarioNombre;
     }
 }

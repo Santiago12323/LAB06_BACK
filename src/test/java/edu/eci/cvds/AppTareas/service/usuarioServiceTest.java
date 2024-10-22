@@ -97,11 +97,11 @@ class usuarioServiceTest {
 
     @Test
     void testObtenerTareasDeUsuario() {
-        Tarea tarea1 = new Tarea("1", "Tarea 1", "Descripción 1", true, "1", 1, "Baja", 2.0);
-        Tarea tarea2 = new Tarea("2", "Tarea 2", "Descripción 2", false, "1", 2, "Media", 3.5);
-        when(mockTareaRepository.findByUsuarioId("1")).thenReturn(Arrays.asList(tarea1, tarea2));
+        Tarea tarea1 = new Tarea("1", "Tarea 1", "Descripción 1", true, "coronado" , 1, "Baja", 2.0);
+        Tarea tarea2 = new Tarea("2", "Tarea 2", "Descripción 2", false,"coronado", 2, "Media", 3.5);
+        when(mockTareaRepository.findByUsuarioNombre("coronado")).thenReturn(Arrays.asList(tarea1, tarea2));
 
-        List<Tarea> tareas = usuarioService.obtenerTareasDeUsuario("1");
+        List<Tarea> tareas = usuarioService.obtenerTareasDeUsuario("coronado");
 
         assertEquals(2, tareas.size());
         assertTrue(tareas.contains(tarea1));
