@@ -217,7 +217,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaElimino_EntoncesLaEliminacionEsExitosa() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false, null,1, "Bajo", 2.2);
+        Tarea tarea = new Tarea("2", "Tarea a eliminar", "Descripción", false,null,1, "Bajo", 2.2);
 
         // Configurar el mock para que retorne la tarea cuando se consulte por ID
         when(tareaPersistence.findById("2")).thenReturn(Optional.of(tarea));
@@ -232,7 +232,7 @@ class TareaServiceTest {
     @Test
     void dadoUnaTareaRegistrada_CuandoLaEliminoYLaConsulto_EntoncesNoRetornaResultado() {
         // Crear una tarea de prueba
-        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false, null,3, "Medio", 5.5);
+        Tarea tarea = new Tarea("3", "Otra Tarea a eliminar", "Descripción", false,null,3, "Medio", 5.5);
 
         // Configurar el mock para que retorne la tarea cuando se consulte por ID antes de eliminarla
         when(tareaPersistence.findById("3")).thenReturn(Optional.of(tarea)).thenReturn(Optional.empty());

@@ -23,7 +23,7 @@ public class usuario {
     private String id;
     private String nombre;
     private String contraseña;
-    @OneToMany(mappedBy = "usuarioId")
+    @OneToMany(mappedBy = "usuarioNombre")
     private List<Tarea> tareas;
 
 

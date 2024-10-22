@@ -58,8 +58,8 @@ public class usuarioService {
         return false;
     }
 
-    public List<Tarea> obtenerTareasDeUsuario(String usuarioId) {
-        return MongoTareaRepository.findByUsuarioId(usuarioId);
+    public List<Tarea> obtenerTareasDeUsuario(String nombre) {
+        return MongoTareaRepository.findByUsuarioNombre(nombre);
     }
 
 
