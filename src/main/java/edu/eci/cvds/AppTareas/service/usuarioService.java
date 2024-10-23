@@ -1,14 +1,15 @@
 package edu.eci.cvds.AppTareas.service;
+
 import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.repository.mongo.MongoUsuarioRepository;
-import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
 import edu.eci.cvds.AppTareas.model.usuario;
+import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
+import edu.eci.cvds.AppTareas.repository.mongo.MongoUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class usuarioService {
@@ -16,6 +17,7 @@ public class usuarioService {
     private final MongoUsuarioRepository MongoUsuarioRepository;
     private final MongoTareaRepository MongoTareaRepository;
 
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Inicializamos el encoder
 
     @Autowired
     public usuarioService(MongoUsuarioRepository MongoUsuarioRepository, MongoTareaRepository MongoTareaRepository) {
@@ -24,8 +26,10 @@ public class usuarioService {
     }
 
     public usuario crearUsuario(usuario usuario) {
+        System.out.println(usuario.getContraseña());
         return MongoUsuarioRepository.save(usuario);
     }
+
 
     public List<usuario> obtenerUsuarios() {
         return MongoUsuarioRepository.findAll();
@@ -40,20 +44,18 @@ public class usuarioService {
             throw new IllegalArgumentException("El ID del usuario no puede ser nulo o vacío");
         }
 
-        // Verifica si la tarea existe antes de intentar eliminarla
         Optional<usuario> usuario = MongoUsuarioRepository.findById(Id);
         if (usuario.isEmpty()) {
-            throw new IllegalArgumentException("No se puede eliminar el usuario. el usuario con ID " + Id + " no existe.");
+            throw new IllegalArgumentException("No se puede eliminar el usuario. El usuario con ID " + Id + " no existe.");
         }
 
-        // Procedemos a eliminar la tarea
         MongoUsuarioRepository.deleteById(Id);
     }
 
-    public boolean verifacarpass(String nombre,String pass){
+    public boolean verificarPass(String nombre, String pass) {
         usuario usuario = MongoUsuarioRepository.findByNombre(nombre);
         if (usuario != null) {
-            return pass.equals(usuario.getContraseña());
+            return passwordEncoder.matches(pass, usuario.getContraseña());
         }
         return false;
     }
@@ -62,6 +64,7 @@ public class usuarioService {
         return MongoTareaRepository.findByUsuarioNombre(nombre);
     }
 
-
-
+    public usuario encontrarUsuario(String nombre){
+        return MongoUsuarioRepository.findByNombre(nombre);
+    }
 }

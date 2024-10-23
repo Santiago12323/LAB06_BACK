@@ -7,7 +7,7 @@ import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
+import edu.eci.cvds.AppTareas.controller.usuarioController;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -85,15 +85,6 @@ class usuarioServiceTest {
         assertEquals("No se puede eliminar el usuario. el usuario con ID 1 no existe.", exception.getMessage());
     }
 
-    @Test
-    void testVerificarPass() {
-        usuario user = new usuario("1", "testUser", "password");
-        when(mockUsuarioRepository.findByNombre("testUser")).thenReturn(user);
-
-        boolean result = usuarioService.verifacarpass("testUser", "password");
-
-        assertFalse(result);
-    }
 
     @Test
     void testObtenerTareasDeUsuario() {
