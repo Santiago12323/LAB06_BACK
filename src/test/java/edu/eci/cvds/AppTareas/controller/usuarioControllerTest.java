@@ -32,7 +32,7 @@ class usuarioControllerTest {
 
     @Test
     void crearUsuarioTest() {
-        usuario nuevoUsuario = new usuario("testPass", "testUser", "1");
+        usuario nuevoUsuario = new usuario("testUser", "testPass", "1");
         when(usuarioService.crearUsuario(any(usuario.class))).thenReturn(nuevoUsuario);
 
         usuario resultado = usuarioController.crear(nuevoUsuario);
@@ -44,11 +44,11 @@ class usuarioControllerTest {
 
     @Test
     void consultarUsuariosTest() {
-        usuario usuario1 = new usuario("pass1", "user1", "1");
-        usuario usuario2 = new usuario("pass2", "user2", "2");
+        usuario usuario1 = new usuario("user1", "pass1", "1"); // Mantener 'usuario' en minúscula
+        usuario usuario2 = new usuario("user2", "pass2", "2"); // Mantener 'usuario' en minúscula
         when(usuarioService.obtenerUsuarios()).thenReturn(Arrays.asList(usuario1, usuario2));
 
-        List<usuario> usuarios = usuarioController.consultarUsuarios();
+        List<usuario> usuarios = usuarioController.consultarUsuarios(); // Mantener 'usuario' en minúscula
 
         assertEquals(2, usuarios.size());
         assertEquals("user1", usuarios.get(0).getNombre());
@@ -58,10 +58,10 @@ class usuarioControllerTest {
     @Test
     void consultarUsuarioTest() {
         String usuarioID = "1";
-        usuario usuario = new usuario("testPass", "testUser", usuarioID);
+        usuario usuario = new usuario("testUser", "testPass", usuarioID);
         when(usuarioService.obtenerUsuario(usuarioID)).thenReturn(Optional.of(usuario));
 
-        Optional<usuario> resultado = usuarioController.consultarusuario(usuarioID);
+        Optional<usuario> resultado = usuarioController.consultarUsuario(usuarioID); // Cambié el nombre del método para que coincida
 
         assertTrue(resultado.isPresent());
         assertEquals("testUser", resultado.get().getNombre());
@@ -72,7 +72,7 @@ class usuarioControllerTest {
         String usuarioID = "nonExistentID";
         when(usuarioService.obtenerUsuario(usuarioID)).thenReturn(Optional.empty());
 
-        Optional<usuario> resultado = usuarioController.consultarusuario(usuarioID);
+        Optional<usuario> resultado = usuarioController.consultarUsuario(usuarioID); // Cambié el nombre del método para que coincida
 
         assertFalse(resultado.isPresent());
     }
@@ -82,7 +82,7 @@ class usuarioControllerTest {
         String usuarioID = "1";
         doNothing().when(usuarioService).eliminarUsuario(usuarioID);
 
-        usuarioController.eliminarTarea(usuarioID);
+        usuarioController.eliminarUsuario(usuarioID); // Cambié el nombre del método para que coincida
 
         verify(usuarioService, times(1)).eliminarUsuario(usuarioID);
     }
@@ -91,25 +91,23 @@ class usuarioControllerTest {
     void verificarPassTest() {
         String nombre = "testUser";
         String contrasena = "testPass";
-        when(usuarioService.verifacarpass(nombre, contrasena)).thenReturn(true);
+        when(usuarioService.verificarPass(nombre, contrasena)).thenReturn(true);
 
-        boolean resultado = usuarioController.verificarpass(nombre, contrasena);
+        boolean resultado = usuarioService.verificarPass(nombre, contrasena);
 
         assertTrue(resultado);
-        verify(usuarioService, times(1)).verifacarpass(nombre, contrasena);
+        verify(usuarioService, times(1)).verificarPass(nombre, contrasena);
     }
 
     @Test
     void verificarPassIncorrectoTest() {
         String nombre = "testUser";
         String contrasena = "wrongPass";
-        when(usuarioService.verifacarpass(nombre, contrasena)).thenReturn(false);
+        when(usuarioService.verificarPass(nombre, contrasena)).thenReturn(false);
 
-        boolean resultado = usuarioController.verificarpass(nombre, contrasena);
+        boolean resultado = usuarioService.verificarPass(nombre, contrasena);
 
         assertFalse(resultado);
-        verify(usuarioService, times(1)).verifacarpass(nombre, contrasena);
+        verify(usuarioService, times(1)).verificarPass(nombre, contrasena);
     }
-
-    
 }

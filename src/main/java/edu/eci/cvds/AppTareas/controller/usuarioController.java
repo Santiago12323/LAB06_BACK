@@ -1,11 +1,14 @@
 package edu.eci.cvds.AppTareas.controller;
 
-
 import edu.eci.cvds.AppTareas.model.Tarea;
 import edu.eci.cvds.AppTareas.model.usuario;
 import edu.eci.cvds.AppTareas.service.usuarioService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -13,11 +16,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/usuario")
 public class usuarioController {
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
+    private usuarioService usuarioService;
 
-    private usuarioService usuarioService; //Inyectado por constructor
-
-    public usuarioController(usuarioService usuarioService){
+    public usuarioController(usuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
@@ -32,26 +36,35 @@ public class usuarioController {
         return usuarioService.obtenerUsuarios();
     }
 
-    @GetMapping("/{usuariosId}")
-    public Optional<usuario> consultarusuario(@PathVariable String usuarioID) {
-        return usuarioService.obtenerUsuario(usuarioID);
+    @GetMapping("/{usuarioId}")
+    public Optional<usuario> consultarUsuario(@PathVariable String usuarioId) {
+        return usuarioService.obtenerUsuario(usuarioId);
     }
 
     @DeleteMapping("/{usuarioId}")
-    public void eliminarTarea(@PathVariable String usuarioID) {
-        usuarioService.eliminarUsuario(usuarioID);
+    public void eliminarUsuario(@PathVariable String usuarioId) {
+        usuarioService.eliminarUsuario(usuarioId);
     }
 
-    @GetMapping("/{nombre}/{contraseña}")
-    public boolean verificarpass(@PathVariable String nombre, @PathVariable String contraseña){
-        return usuarioService.verifacarpass(nombre,contraseña);
+    @GetMapping("/verificar/{nombre}/{contraseña}")
+    public boolean verificarPass(@PathVariable String nombre, @PathVariable String contraseña) {
+
+        usuario usuario = usuarioService.encontrarUsuario(nombre);
+        if (usuario != null) {
+            String contrasenaAlmacenada = usuario.getContraseña();
+
+            // Utiliza el método matches para comparar
+            boolean match = passwordEncoder.matches(contraseña, contrasenaAlmacenada);
+            return match;
+        }
+
+        System.out.println("Usuario no encontrado: " + nombre);
+        return false;
     }
+
 
     @GetMapping("/tareas/{nombre}")
-    public List<Tarea> tareasUsuario(@PathVariable String nombre){
+    public List<Tarea> tareasUsuario(@PathVariable String nombre) {
         return usuarioService.obtenerTareasDeUsuario(nombre);
     }
-
-
-
 }

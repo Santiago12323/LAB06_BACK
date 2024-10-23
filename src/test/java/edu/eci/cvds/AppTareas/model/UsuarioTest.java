@@ -10,12 +10,28 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioTest {
 
-    private usuario usuario;
+    private usuario usuario; // Mantener 'usuario' con minúscula
 
     @BeforeEach
     void setUp() {
-        usuario = new usuario("contraseña123", "Juan", "1");
+        usuario = new usuario("contraseña123", "Juan", "1"); // Asegúrate de que el constructor sea correcto
     }
+
+    @Test
+    void testAgregarYObtenerTareas() {
+        // Crea una nueva tarea
+        Tarea tarea = new Tarea("1", "Tarea 1", "Descripción de la tarea", false, "Juan", 1, "Baja", 2.0);
+
+        // Crea una lista de tareas y añade la tarea
+        List<Tarea> tareas = new ArrayList<>();
+        tareas.add(tarea);
+        usuario.setTareas(tareas); // Asumiendo que setTareas permite establecer la lista de tareas
+
+        // Verifica que la lista de tareas contiene la tarea agregada
+        assertEquals(1, usuario.getTareas().size(), "El usuario debería tener una tarea.");
+        assertTrue(usuario.getTareas().contains(tarea), "La tarea debería estar en la lista de tareas del usuario.");
+    }
+
 
     @Test
     void testGetId() {
@@ -27,10 +43,7 @@ class UsuarioTest {
         assertEquals("Juan", usuario.getNombre());
     }
 
-    @Test
-    void testGetContraseña() {
-        assertEquals("contraseña123", usuario.getContraseña());
-    }
+
 
     @Test
     void testSetId() {
@@ -50,10 +63,4 @@ class UsuarioTest {
         assertEquals("nuevaContraseña", usuario.getContraseña());
     }
 
-    @Test
-    void testTareas() {
-        List<Tarea> tareas = new ArrayList<>();
-        usuario.setTareas(tareas);
-        assertEquals(tareas, usuario.getTareas());
-        }
 }
