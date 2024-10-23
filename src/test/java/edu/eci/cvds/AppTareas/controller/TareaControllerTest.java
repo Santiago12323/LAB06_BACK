@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -32,7 +33,7 @@ class TareaControllerTest {
 
     @BeforeEach
     void setUp() {
-        tarea = new Tarea(UUID.randomUUID().toString(), "Tarea 1", "Descripción 1", false,null, 4, "Alto", 10);
+        tarea = new Tarea(UUID.randomUUID().toString(), "Tarea 1", "Descripción 1", false, null, 4, "Alto", 10);
     }
 
     @Test
@@ -41,8 +42,9 @@ class TareaControllerTest {
 
         mockMvc.perform(post("/tareas")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"nombre\": \"Tarea 1\", \"descripcion\": \"Descripción 1\", \"estado\": false }"))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                        .content("{ \"nombre\": \"Tarea 1\", \"descripcion\": \"Descripción 1\", \"estado\": false, \"prioridad\": 4, \"nivelUrgencia\": \"Alto\", \"tiempoEstimado\": 10 }"))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nombre").value("Tarea 1"));
 
         verify(tareaService, times(1)).crear(any(Tarea.class));
     }
@@ -53,7 +55,8 @@ class TareaControllerTest {
 
         mockMvc.perform(get("/tareas")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].nombre").value("Tarea 1"));
 
         verify(tareaService, times(1)).obtenerTareas();
     }
@@ -64,7 +67,8 @@ class TareaControllerTest {
 
         mockMvc.perform(get("/tareas/" + tarea.getId())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.nombre").value("Tarea 1"));
 
         verify(tareaService, times(1)).obtenerTarea(tarea.getId());
     }
@@ -93,13 +97,13 @@ class TareaControllerTest {
 
     @Test
     void testActualizarTarea() throws Exception {
-        Tarea nuevaTarea = new Tarea(tarea.getId(), "Tarea Actualizada", "Descripción Actualizada", true,null, 4, "Alto", 10);
+        Tarea nuevaTarea = new Tarea(tarea.getId(), "Tarea Actualizada", "Descripción Actualizada", true, null, 4, "Alto", 10);
 
         doNothing().when(tareaService).actualizarTarea(anyString(), any(Tarea.class));
 
         mockMvc.perform(put("/tareas/" + tarea.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{ \"nombre\": \"Tarea Actualizada\", \"descripcion\": \"Descripción Actualizada\", \"estado\": true }"))
+                        .content("{ \"nombre\": \"Tarea Actualizada\", \"descripcion\": \"Descripción Actualizada\", \"estado\": true, \"prioridad\": 4, \"nivelUrgencia\": \"Alto\", \"tiempoEstimado\": 10 }"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
         verify(tareaService, times(1)).actualizarTarea(eq(tarea.getId()), any(Tarea.class));

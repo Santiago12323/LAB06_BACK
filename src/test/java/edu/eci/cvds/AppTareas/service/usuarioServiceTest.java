@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import edu.eci.cvds.AppTareas.controller.usuarioController;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,15 +76,19 @@ class usuarioServiceTest {
     }
 
     @Test
-    void testEliminarUsuario_NoUserFound() {
-        when(mockUsuarioRepository.findById("1")).thenReturn(Optional.empty());
+    void testObtenerUsuarios_Vacio() {
+        // Configura el repositorio simulado para devolver una lista vacía
+        when(mockUsuarioRepository.findAll()).thenReturn(Collections.emptyList());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            usuarioService.eliminarUsuario("1");
-        });
+        // Llama al método obtenerUsuarios
+        List<usuario> usuarios = usuarioService.obtenerUsuarios();
 
-        assertEquals("No se puede eliminar el usuario. el usuario con ID 1 no existe.", exception.getMessage());
+        // Verifica que la lista de usuarios está vacía
+        assertTrue(usuarios.isEmpty());
     }
+
+
+
 
 
     @Test
