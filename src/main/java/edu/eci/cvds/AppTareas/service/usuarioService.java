@@ -26,7 +26,9 @@ public class usuarioService {
     }
 
     public usuario crearUsuario(usuario usuario) {
-        System.out.println(usuario.getContraseña());
+        if (MongoUsuarioRepository.findByNombre(usuario.getNombre()) != null){
+            throw new IllegalArgumentException("El nombre" + usuario.getNombre() + "ya se encuentra en uso.");
+        }
         return MongoUsuarioRepository.save(usuario);
     }
 

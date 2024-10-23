@@ -5,7 +5,9 @@ import edu.eci.cvds.AppTareas.model.usuario;
 import edu.eci.cvds.AppTareas.service.usuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -26,9 +28,13 @@ public class usuarioController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public usuario crear(@RequestBody usuario usuario) {
-        return usuarioService.crearUsuario(usuario);
+    public ResponseEntity<String> crear(@RequestBody usuario usuario) {
+        try {
+            usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
+            return new ResponseEntity<>("Usuario creado: " + nuevoUsuario.getNombre(), HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping
@@ -52,8 +58,6 @@ public class usuarioController {
         usuario usuario = usuarioService.encontrarUsuario(nombre);
         if (usuario != null) {
             String contrasenaAlmacenada = usuario.getContraseña();
-
-            // Utiliza el método matches para comparar
             boolean match = passwordEncoder.matches(contraseña, contrasenaAlmacenada);
             return match;
         }
