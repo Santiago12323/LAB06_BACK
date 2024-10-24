@@ -17,7 +17,7 @@ public class usuarioService {
     private final MongoUsuarioRepository MongoUsuarioRepository;
     private final MongoTareaRepository MongoTareaRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Inicializamos el encoder
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
     public usuarioService(MongoUsuarioRepository MongoUsuarioRepository, MongoTareaRepository MongoTareaRepository) {
