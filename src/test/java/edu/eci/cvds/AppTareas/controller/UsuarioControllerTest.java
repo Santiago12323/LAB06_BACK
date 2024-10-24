@@ -10,6 +10,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -85,8 +87,8 @@ class UsuarioControllerTest {
 
     @Test
     void testCrearUsuarioConNombreNulo() {
-        usuario nuevoUsuario = new usuario("password", null, "1"); // Nombre nulo
-        when(usuarioService.crearUsuario(any(usuario.class))).thenThrow(new IllegalArgumentException("El nombre no puede ser nulo"));
+        Usuario nuevoUsuario = new Usuario("password", null, "1"); // Nombre nulo
+        when(usuarioService.crearUsuario(any(Usuario.class))).thenThrow(new IllegalArgumentException("El nombre no puede ser nulo"));
 
         ResponseEntity<String> response = usuarioController.crear(nuevoUsuario);
 
@@ -97,13 +99,13 @@ class UsuarioControllerTest {
 
     @Test
     void testConsultarUsuarios() {
-        usuario usuario1 = new usuario("pass1", "user1", "1");
-        usuario usuario2 = new usuario("pass2", "user2", "2");
-        List<usuario> listaUsuarios = Arrays.asList(usuario1, usuario2);
+        Usuario usuario1 = new Usuario("pass1", "user1", "1");
+        Usuario usuario2 = new Usuario("pass2", "user2", "2");
+        List<Usuario> listaUsuarios = Arrays.asList(usuario1, usuario2);
 
         when(usuarioService.obtenerUsuarios()).thenReturn(listaUsuarios);
 
-        List<usuario> resultado = usuarioController.consultarUsuarios();
+        List<Usuario> resultado = usuarioController.consultarUsuarios();
 
         assertEquals(2, resultado.size());
         assertEquals("user1", resultado.get(0).getNombre());
