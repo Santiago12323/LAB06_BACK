@@ -1,7 +1,7 @@
 package edu.eci.cvds.AppTareas.service;
 
 import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.model.usuario;
+import edu.eci.cvds.AppTareas.model.Usuario;
 import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
 import edu.eci.cvds.AppTareas.repository.mongo.MongoUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +12,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class usuarioService {
+public class UsuarioService {
 
     private final MongoUsuarioRepository MongoUsuarioRepository;
     private final MongoTareaRepository MongoTareaRepository;
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // Inicializamos el encoder
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public usuarioService(MongoUsuarioRepository MongoUsuarioRepository, MongoTareaRepository MongoTareaRepository) {
+    public UsuarioService(MongoUsuarioRepository MongoUsuarioRepository, MongoTareaRepository MongoTareaRepository) {
         this.MongoUsuarioRepository = MongoUsuarioRepository;
         this.MongoTareaRepository = MongoTareaRepository;
     }
 
-    public usuario crearUsuario(usuario usuario) {
+    public Usuario crearUsuario(Usuario usuario) {
         if (MongoUsuarioRepository.findByNombre(usuario.getNombre()) != null){
             throw new IllegalArgumentException("El nombre" + usuario.getNombre() + "ya se encuentra en uso.");
         }
@@ -33,11 +33,11 @@ public class usuarioService {
     }
 
 
-    public List<usuario> obtenerUsuarios() {
+    public List<Usuario> obtenerUsuarios() {
         return MongoUsuarioRepository.findAll();
     }
 
-    public Optional<usuario> obtenerUsuario(String id) {
+    public Optional<Usuario> obtenerUsuario(String id) {
         return MongoUsuarioRepository.findById(id);
     }
 
@@ -46,7 +46,7 @@ public class usuarioService {
             throw new IllegalArgumentException("El ID del usuario no puede ser nulo o vacío");
         }
 
-        Optional<usuario> usuario = MongoUsuarioRepository.findById(Id);
+        Optional<Usuario> usuario = MongoUsuarioRepository.findById(Id);
         if (usuario.isEmpty()) {
             throw new IllegalArgumentException("No se puede eliminar el usuario. El usuario con ID " + Id + " no existe.");
         }
@@ -55,9 +55,9 @@ public class usuarioService {
     }
 
     public boolean verificarPass(String nombre, String pass) {
-        usuario usuario = MongoUsuarioRepository.findByNombre(nombre);
+        Usuario usuario = MongoUsuarioRepository.findByNombre(nombre);
         if (usuario != null) {
-            return passwordEncoder.matches(pass, usuario.getContraseña());
+            return passwordEncoder.matches(pass, usuario.getContrasena());
         }
         return false;
     }
@@ -66,7 +66,7 @@ public class usuarioService {
         return MongoTareaRepository.findByUsuarioNombre(nombre);
     }
 
-    public usuario encontrarUsuario(String nombre){
+    public Usuario encontrarUsuario(String nombre){
         return MongoUsuarioRepository.findByNombre(nombre);
     }
 }

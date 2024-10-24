@@ -1,8 +1,7 @@
 package edu.eci.cvds.AppTareas.controller;
 
-import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.model.usuario;
-import edu.eci.cvds.AppTareas.service.usuarioService;
+import edu.eci.cvds.AppTareas.model.Usuario;
+import edu.eci.cvds.AppTareas.service.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,21 +10,19 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class usuarioControllerTest {
+class UsuarioControllerTest {
 
     @InjectMocks
-    private usuarioController usuarioController;
+    private UsuarioController usuarioController;
 
     @Mock
-    private usuarioService usuarioService;
+    private UsuarioService usuarioService;
 
     @BeforeEach
     public void setUp() {
@@ -34,35 +31,35 @@ class usuarioControllerTest {
 
     @Test
     void testCrearUsuarioExitosamente() {
-        usuario usuario = new usuario("password", "nuevoUsuario", "1");
-        when(usuarioService.crearUsuario(any(usuario.class))).thenReturn(usuario);
+        Usuario usuario = new Usuario("password", "nuevoUsuario", "1");
+        when(usuarioService.crearUsuario(any(Usuario.class))).thenReturn(usuario);
         ResponseEntity<String> response = usuarioController.crear(usuario);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(response.getBody().contains("Usuario creado: nuevoUsuario"));
     }
 
     @Test
-    void consultarUsuarioNoExistenteTest() {
+    void testConsultarUsuarioNoExistente() {
         String usuarioID = "nonExistentID";
         when(usuarioService.obtenerUsuario(usuarioID)).thenReturn(Optional.empty());
 
-        Optional<usuario> resultado = usuarioController.consultarUsuario(usuarioID); // Cambié el nombre del método para que coincida
+        Optional<Usuario> resultado = usuarioController.consultarUsuario(usuarioID);
 
         assertFalse(resultado.isPresent());
     }
 
     @Test
-    void eliminarUsuarioTest() {
+    void testEliminarUsuario() {
         String usuarioID = "1";
         doNothing().when(usuarioService).eliminarUsuario(usuarioID);
 
-        usuarioController.eliminarUsuario(usuarioID); // Cambié el nombre del método para que coincida
+        usuarioController.eliminarUsuario(usuarioID);
 
         verify(usuarioService, times(1)).eliminarUsuario(usuarioID);
     }
 
     @Test
-    void verificarPassTest() {
+    void testVerificarPassCorrecto() {
         String nombre = "testUser";
         String contrasena = "testPass";
         when(usuarioService.verificarPass(nombre, contrasena)).thenReturn(true);
@@ -74,7 +71,7 @@ class usuarioControllerTest {
     }
 
     @Test
-    void verificarPassIncorrectoTest() {
+    void testVerificarPassIncorrecto() {
         String nombre = "testUser";
         String contrasena = "wrongPass";
         when(usuarioService.verificarPass(nombre, contrasena)).thenReturn(false);

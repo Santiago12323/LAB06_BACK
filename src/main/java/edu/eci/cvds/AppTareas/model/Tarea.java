@@ -5,9 +5,12 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@Document(collection = "tareas")
 @Entity
 @Table(name = "tareas")
 @Data
@@ -17,7 +20,6 @@ public class Tarea {
     private String nombre;
     private String descripcion;
     private boolean estado;
-
     private int prioridad;
     private String dificultad;
     private double tiempoPromedio;
@@ -35,49 +37,7 @@ public class Tarea {
         this.tiempoPromedio = tiempoPromedio;
     }
 
-    public Tarea(){
-
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
     public boolean getEstado() {
         return estado;
-    }
-
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public void setEstado(boolean estado) {
-        this.estado = estado;
-    }
-
-
-    public String getUsuarioNombre() {
-        return usuarioNombre;
-    }
-
-    public void setUsuarioNombre(String usuarioNombre) {
-        this.usuarioNombre = usuarioNombre;
     }
 }

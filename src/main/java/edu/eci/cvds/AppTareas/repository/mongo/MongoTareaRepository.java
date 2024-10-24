@@ -10,5 +10,4 @@ import java.util.List;
 @Repository("mongoUsuarioDB")
 public interface MongoTareaRepository extends MongoRepository<Tarea, String>, TareaPersistence {
     List<Tarea> findByUsuarioNombre(String usuarioNombre);
-
 }
