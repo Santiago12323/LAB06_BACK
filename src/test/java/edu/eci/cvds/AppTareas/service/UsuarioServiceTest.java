@@ -1,7 +1,7 @@
 package edu.eci.cvds.AppTareas.service;
 
 import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.model.usuario;
+import edu.eci.cvds.AppTareas.model.Usuario;
 import edu.eci.cvds.AppTareas.repository.mongo.MongoUsuarioRepository;
 import edu.eci.cvds.AppTareas.repository.mongo.MongoTareaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,26 +18,26 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class usuarioServiceTest {
+class UsuarioServiceTest {
 
     private MongoUsuarioRepository mockUsuarioRepository;
     private MongoTareaRepository mockTareaRepository;
-    private usuarioService usuarioService;
+    private UsuarioService usuarioService;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() {
         mockUsuarioRepository = Mockito.mock(MongoUsuarioRepository.class);
         mockTareaRepository = Mockito.mock(MongoTareaRepository.class);
-        usuarioService = new usuarioService(mockUsuarioRepository, mockTareaRepository);
+        usuarioService = new UsuarioService(mockUsuarioRepository, mockTareaRepository);
     }
 
     @Test
     void testCrearUsuario() {
-        usuario newUser = new usuario("1", "testUser", "password");
-        when(mockUsuarioRepository.save(any(usuario.class))).thenReturn(newUser);
+        Usuario newUser = new Usuario("1", "testUser", "password");
+        when(mockUsuarioRepository.save(any(Usuario.class))).thenReturn(newUser);
 
-        usuario createdUser = usuarioService.crearUsuario(newUser);
+        Usuario createdUser = usuarioService.crearUsuario(newUser);
 
         assertEquals(newUser, createdUser);
         verify(mockUsuarioRepository).save(newUser);
@@ -45,11 +45,11 @@ class usuarioServiceTest {
 
     @Test
     void testObtenerUsuarios() {
-        usuario user1 = new usuario("1", "user1", "pass1");
-        usuario user2 = new usuario("2", "user2", "pass2");
+        Usuario user1 = new Usuario("1", "user1", "pass1");
+        Usuario user2 = new Usuario("2", "user2", "pass2");
         when(mockUsuarioRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
-        List<usuario> usuarios = usuarioService.obtenerUsuarios();
+        List<Usuario> usuarios = usuarioService.obtenerUsuarios();
 
         assertEquals(2, usuarios.size());
         assertTrue(usuarios.contains(user1));
@@ -58,10 +58,10 @@ class usuarioServiceTest {
 
     @Test
     void testObtenerUsuario() {
-        usuario user = new usuario("1", "user", "pass");
+        Usuario user = new Usuario("1", "user", "pass");
         when(mockUsuarioRepository.findById("1")).thenReturn(Optional.of(user));
 
-        Optional<usuario> foundUser = usuarioService.obtenerUsuario("1");
+        Optional<Usuario> foundUser = usuarioService.obtenerUsuario("1");
 
         assertTrue(foundUser.isPresent());
         assertEquals(user, foundUser.get());
@@ -69,7 +69,7 @@ class usuarioServiceTest {
 
     @Test
     void testEliminarUsuario() {
-        usuario user = new usuario("1", "user", "pass");
+        Usuario user = new Usuario("1", "user", "pass");
         when(mockUsuarioRepository.findById("1")).thenReturn(Optional.of(user));
 
         usuarioService.eliminarUsuario("1");
@@ -83,15 +83,11 @@ class usuarioServiceTest {
         when(mockUsuarioRepository.findAll()).thenReturn(Collections.emptyList());
 
         // Llama al método obtenerUsuarios
-        List<usuario> usuarios = usuarioService.obtenerUsuarios();
+        List<Usuario> usuarios = usuarioService.obtenerUsuarios();
 
         // Verifica que la lista de usuarios está vacía
         assertTrue(usuarios.isEmpty());
     }
-
-
-
-
 
     @Test
     void testObtenerTareasDeUsuario() {
@@ -108,21 +104,20 @@ class usuarioServiceTest {
 
     @Test
     void testCrearUsuario_Nuevo() {
-        usuario newUser = new usuario("2", "newUser", "password");
-        when(mockUsuarioRepository.save(any(usuario.class))).thenReturn(newUser);
+        Usuario newUser = new Usuario("2", "newUser", "password");
+        when(mockUsuarioRepository.save(any(Usuario.class))).thenReturn(newUser);
 
-        usuario createdUser = usuarioService.crearUsuario(newUser);
+        Usuario createdUser = usuarioService.crearUsuario(newUser);
 
         assertEquals(newUser, createdUser);
         verify(mockUsuarioRepository).save(newUser);
     }
 
-
     @Test
     void testObtenerUsuario_NoExistente() {
         when(mockUsuarioRepository.findById("nonExistentId")).thenReturn(Optional.empty());
 
-        Optional<usuario> foundUser = usuarioService.obtenerUsuario("nonExistentId");
+        Optional<Usuario> foundUser = usuarioService.obtenerUsuario("nonExistentId");
 
         assertFalse(foundUser.isPresent());
     }
@@ -159,7 +154,7 @@ class usuarioServiceTest {
         String nombreUsuario = "testUser";
         String password = "correctPassword";
 
-        usuario testUser = new usuario("correctPassword", nombreUsuario, "1");
+        Usuario testUser = new Usuario("correctPassword", nombreUsuario, "1");
 
         boolean result = usuarioService.verificarPass(nombreUsuario, password);
 
@@ -172,7 +167,7 @@ class usuarioServiceTest {
         String password = "incorrectPassword";
         String encryptedPassword = passwordEncoder.encode("correctPassword");
 
-        usuario testUser = new usuario("1", nombreUsuario, encryptedPassword);
+        Usuario testUser = new Usuario("1", nombreUsuario, encryptedPassword);
         when(mockUsuarioRepository.findByNombre(nombreUsuario)).thenReturn(testUser);
 
         boolean result = usuarioService.verificarPass(nombreUsuario, password);
@@ -197,22 +192,21 @@ class usuarioServiceTest {
         String nombreUsuario = "testUser";
         String encryptedPassword = passwordEncoder.encode("correctPassword");
 
-        usuario testUser = new usuario("correctPassword", nombreUsuario,"1");
+        Usuario testUser = new Usuario("correctPassword", nombreUsuario,"1");
 
-        boolean result = usuarioService.verificarPass(testUser.getContraseña(),encryptedPassword ); // Probar con contraseña nula
+        boolean result = usuarioService.verificarPass(testUser.getContrasena(),encryptedPassword ); // Probar con contraseña nula
 
         assertFalse(result);
     }
 
-
     @Test
     void testEncontrarUsuario_Existente() {
         String nombreUsuario = "testUser";
-        usuario testUser = new usuario("1", nombreUsuario, "encryptedPassword");
+        Usuario testUser = new Usuario("1", nombreUsuario, "encryptedPassword");
 
         when(mockUsuarioRepository.findByNombre(nombreUsuario)).thenReturn(testUser);
 
-        usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
+        Usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
 
         assertNotNull(foundUser);
         assertEquals(testUser, foundUser);
@@ -224,7 +218,7 @@ class usuarioServiceTest {
 
         when(mockUsuarioRepository.findByNombre(nombreUsuario)).thenReturn(null);
 
-        usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
+        Usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
 
         assertNull(foundUser);
     }
@@ -233,10 +227,9 @@ class usuarioServiceTest {
     void testEncontrarUsuario_NombreEnBlanco() {
         String nombreUsuario = "";
 
-
         when(mockUsuarioRepository.findByNombre(nombreUsuario)).thenReturn(null);
 
-        usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
+        Usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
 
         assertNull(foundUser);
     }
@@ -247,14 +240,14 @@ class usuarioServiceTest {
 
         when(mockUsuarioRepository.findByNombre(nombreUsuario)).thenReturn(null);
 
-        usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
+        Usuario foundUser = usuarioService.encontrarUsuario(nombreUsuario);
 
         assertNull(foundUser);
     }
 
     @Test
     void testCrearUsuario_UsuarioExistente() {
-        usuario existingUser = new usuario("1", "existingUser", "password");
+        Usuario existingUser = new Usuario("1", "existingUser", "password");
         when(mockUsuarioRepository.findByNombre(existingUser.getNombre())).thenReturn(existingUser); // El usuario ya existe
 
         assertThrows(RuntimeException.class, () -> usuarioService.crearUsuario(existingUser));
@@ -263,12 +256,11 @@ class usuarioServiceTest {
 
     @Test
     void testCrearUsuario_SinNombre() {
-        usuario newUser = new usuario("pass", null, "1"); // Nombre nulo
+        Usuario newUser = new Usuario("pass", null, "1"); // Nombre nulo
 
         assertDoesNotThrow(() -> usuarioService.crearUsuario(newUser));
 
     }
-
 
     @Test
     void testPreliminarily_NoExisten() {
@@ -281,8 +273,4 @@ class usuarioServiceTest {
     void testEliminarUsuario_IdNulo() {
         assertThrows(RuntimeException.class, () -> usuarioService.eliminarUsuario(null)); // ID nulo
     }
-
-
-
-
 }

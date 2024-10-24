@@ -249,6 +249,4 @@ class TareaServiceTest {
         verify(tareaPersistence, times(2)).findById("3");  // Se llama para eliminar y consultar
         verify(tareaPersistence, times(1)).deleteById("3"); // Se llama para eliminar la tarea
     }
-
-
 }

@@ -1,12 +1,11 @@
 package edu.eci.cvds.AppTareas.controller;
 
 import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.model.usuario;
-import edu.eci.cvds.AppTareas.service.usuarioService;
+import edu.eci.cvds.AppTareas.model.Usuario;
+import edu.eci.cvds.AppTareas.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,20 +16,20 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/usuario")
-public class usuarioController {
+public class UsuarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private usuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
-    public usuarioController(usuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
     @PostMapping
-    public ResponseEntity<String> crear(@RequestBody usuario usuario) {
+    public ResponseEntity<String> crear(@RequestBody Usuario usuario) {
         try {
-            usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
+            Usuario nuevoUsuario = usuarioService.crearUsuario(usuario);
             return new ResponseEntity<>("Usuario creado: " + nuevoUsuario.getNombre(), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -38,12 +37,12 @@ public class usuarioController {
     }
 
     @GetMapping
-    public List<usuario> consultarUsuarios() {
+    public List<Usuario> consultarUsuarios() {
         return usuarioService.obtenerUsuarios();
     }
 
     @GetMapping("/{usuarioId}")
-    public Optional<usuario> consultarUsuario(@PathVariable String usuarioId) {
+    public Optional<Usuario> consultarUsuario(@PathVariable String usuarioId) {
         return usuarioService.obtenerUsuario(usuarioId);
     }
 
@@ -52,20 +51,19 @@ public class usuarioController {
         usuarioService.eliminarUsuario(usuarioId);
     }
 
-    @GetMapping("/verificar/{nombre}/{contraseña}")
-    public boolean verificarPass(@PathVariable String nombre, @PathVariable String contraseña) {
+    @GetMapping("/verificar/{nombre}/{contrasena}")
+    public boolean verificarPass(@PathVariable String nombre, @PathVariable String contrasena) {
 
-        usuario usuario = usuarioService.encontrarUsuario(nombre);
+        Usuario usuario = usuarioService.encontrarUsuario(nombre);
         if (usuario != null) {
-            String contrasenaAlmacenada = usuario.getContraseña();
-            boolean match = passwordEncoder.matches(contraseña, contrasenaAlmacenada);
+            String contrasenaAlmacenada = usuario.getContrasena();
+            boolean match = passwordEncoder.matches(contrasena, contrasenaAlmacenada);
             return match;
         }
 
         System.out.println("Usuario no encontrado: " + nombre);
         return false;
     }
-
 
     @GetMapping("/tareas/{nombre}")
     public List<Tarea> tareasUsuario(@PathVariable String nombre) {

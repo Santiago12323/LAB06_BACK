@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
 
-
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -64,6 +63,4 @@ class TareaControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
-
-
 }

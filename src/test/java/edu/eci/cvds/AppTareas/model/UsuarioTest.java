@@ -4,19 +4,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class UsuarioTest {
 
-    private usuario usuario;
+    private Usuario usuario;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @BeforeEach
     void setUp() {
-        usuario = new usuario("contraseña123", "Juan", "1");
+        usuario = new Usuario("contraseña123", "Juan", "1");
     }
 
     @Test
@@ -28,8 +25,6 @@ class UsuarioTest {
     void testGetNombre() {
         assertEquals("Juan", usuario.getNombre());
     }
-
-
 
     @Test
     void testSetId() {
@@ -44,10 +39,8 @@ class UsuarioTest {
     }
 
     @Test
-    void testSetContraseña() {
-        usuario.setContraseña("nuevaContraseña");
-        assertTrue(passwordEncoder.matches("nuevaContraseña", usuario.getContraseña()));
+    void testSetContrasena() {
+        usuario.setContrasena("nuevaContraseña");
+        assertTrue(passwordEncoder.matches("nuevaContraseña", usuario.getContrasena()));
     }
-
-
 }

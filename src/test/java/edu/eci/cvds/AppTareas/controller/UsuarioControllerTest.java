@@ -1,8 +1,7 @@
 package edu.eci.cvds.AppTareas.controller;
 
-import edu.eci.cvds.AppTareas.model.Tarea;
-import edu.eci.cvds.AppTareas.model.usuario;
-import edu.eci.cvds.AppTareas.service.usuarioService;
+import edu.eci.cvds.AppTareas.model.Usuario;
+import edu.eci.cvds.AppTareas.service.UsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class usuarioControllerTest {
+class UsuarioControllerTest {
 
     @InjectMocks
-    private usuarioController usuarioController;
+    private UsuarioController usuarioController;
 
     @Mock
-    private usuarioService usuarioService;
+    private UsuarioService usuarioService;
 
     @BeforeEach
     public void setUp() {
@@ -34,35 +33,35 @@ class usuarioControllerTest {
 
     @Test
     void testCrearUsuarioExitosamente() {
-        usuario usuario = new usuario("password", "nuevoUsuario", "1");
-        when(usuarioService.crearUsuario(any(usuario.class))).thenReturn(usuario);
+        Usuario usuario = new Usuario("password", "nuevoUsuario", "1");
+        when(usuarioService.crearUsuario(any(Usuario.class))).thenReturn(usuario);
         ResponseEntity<String> response = usuarioController.crear(usuario);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(response.getBody().contains("Usuario creado: nuevoUsuario"));
     }
 
     @Test
-    void consultarUsuarioNoExistenteTest() {
+    void testConsultarUsuarioNoExistente() {
         String usuarioID = "nonExistentID";
         when(usuarioService.obtenerUsuario(usuarioID)).thenReturn(Optional.empty());
 
-        Optional<usuario> resultado = usuarioController.consultarUsuario(usuarioID); // Cambié el nombre del método para que coincida
+        Optional<Usuario> resultado = usuarioController.consultarUsuario(usuarioID);
 
         assertFalse(resultado.isPresent());
     }
 
     @Test
-    void eliminarUsuarioTest() {
+    void testEliminarUsuario() {
         String usuarioID = "1";
         doNothing().when(usuarioService).eliminarUsuario(usuarioID);
 
-        usuarioController.eliminarUsuario(usuarioID); // Cambié el nombre del método para que coincida
+        usuarioController.eliminarUsuario(usuarioID);
 
         verify(usuarioService, times(1)).eliminarUsuario(usuarioID);
     }
 
     @Test
-    void verificarPassTest() {
+    void testVerificarPassCorrecto() {
         String nombre = "testUser";
         String contrasena = "testPass";
         when(usuarioService.verificarPass(nombre, contrasena)).thenReturn(true);
@@ -74,7 +73,7 @@ class usuarioControllerTest {
     }
 
     @Test
-    void verificarPassIncorrectoTest() {
+    void testVerificarPassIncorrecto() {
         String nombre = "testUser";
         String contrasena = "wrongPass";
         when(usuarioService.verificarPass(nombre, contrasena)).thenReturn(false);
@@ -88,8 +87,8 @@ class usuarioControllerTest {
 
     @Test
     void testCrearUsuarioConNombreNulo() {
-        usuario nuevoUsuario = new usuario("password", null, "1"); // Nombre nulo
-        when(usuarioService.crearUsuario(any(usuario.class))).thenThrow(new IllegalArgumentException("El nombre no puede ser nulo"));
+        Usuario nuevoUsuario = new Usuario("password", null, "1"); // Nombre nulo
+        when(usuarioService.crearUsuario(any(Usuario.class))).thenThrow(new IllegalArgumentException("El nombre no puede ser nulo"));
 
         ResponseEntity<String> response = usuarioController.crear(nuevoUsuario);
 
@@ -100,13 +99,13 @@ class usuarioControllerTest {
 
     @Test
     void testConsultarUsuarios() {
-        usuario usuario1 = new usuario("pass1", "user1", "1");
-        usuario usuario2 = new usuario("pass2", "user2", "2");
-        List<usuario> listaUsuarios = Arrays.asList(usuario1, usuario2);
+        Usuario usuario1 = new Usuario("pass1", "user1", "1");
+        Usuario usuario2 = new Usuario("pass2", "user2", "2");
+        List<Usuario> listaUsuarios = Arrays.asList(usuario1, usuario2);
 
         when(usuarioService.obtenerUsuarios()).thenReturn(listaUsuarios);
 
-        List<usuario> resultado = usuarioController.consultarUsuarios();
+        List<Usuario> resultado = usuarioController.consultarUsuarios();
 
         assertEquals(2, resultado.size());
         assertEquals("user1", resultado.get(0).getNombre());
